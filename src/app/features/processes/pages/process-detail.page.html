@@ -1,0 +1,94 @@
+<a class="back-link" routerLink="/procesos">Volver a la búsqueda</a>
+
+@if (processQuery.isPending()) {
+  <app-loading-state />
+} @else if (processQuery.isError()) {
+  <app-error-state [message]="errorMessage()" (retry)="processQuery.refetch()" />
+} @else if (processQuery.data(); as process) {
+  <article class="detail">
+    <p class="eyebrow">{{ formatText(process.processId) }}</p>
+    <h2>{{ formatText(process.procedureName) }}</h2>
+    <p class="lead">{{ formatText(process.description) }}</p>
+
+    <dl>
+      <div>
+        <dt>Entidad</dt>
+        <dd>{{ formatText(process.entityName) }}</dd>
+      </div>
+      <div>
+        <dt>NIT</dt>
+        <dd>{{ formatText(process.entityNit) }}</dd>
+      </div>
+      <div>
+        <dt>Ubicación</dt>
+        <dd>{{ formatText(process.city) }}{{ process.department ? ', ' + process.department : '' }}</dd>
+      </div>
+      <div>
+        <dt>Referencia</dt>
+        <dd>{{ formatText(process.reference) }}</dd>
+      </div>
+      <div>
+        <dt>Modalidad</dt>
+        <dd>{{ formatText(process.modality) }}</dd>
+      </div>
+      <div>
+        <dt>Tipo de contrato</dt>
+        <dd>{{ formatText(process.contractType) }}</dd>
+      </div>
+      <div>
+        <dt>Fase</dt>
+        <dd>{{ formatText(process.phase) }}</dd>
+      </div>
+      <div>
+        <dt>Estado</dt>
+        <dd>{{ formatText(process.status) }}</dd>
+      </div>
+      <div>
+        <dt>Publicado</dt>
+        <dd>{{ formatDate(process.publishedOn) }}</dd>
+      </div>
+      <div>
+        <dt>Última publicación</dt>
+        <dd>{{ formatDate(process.lastPublishedOn) }}</dd>
+      </div>
+      <div>
+        <dt>Recepción de ofertas</dt>
+        <dd>{{ formatDate(process.offersDueOn) }}</dd>
+      </div>
+      <div>
+        <dt>Precio base</dt>
+        <dd>{{ formatCop(process.basePrice) }}</dd>
+      </div>
+      <div>
+        <dt>Duración</dt>
+        <dd>{{ process.duration ? process.duration + ' ' + formatText(process.durationUnit) : 'Sin dato' }}</dd>
+      </div>
+      <div>
+        <dt>Apertura</dt>
+        <dd>{{ formatText(process.openingStatus) }}</dd>
+      </div>
+      <div>
+        <dt>Adjudicado</dt>
+        <dd>{{ formatText(process.awarded) }}</dd>
+      </div>
+      <div>
+        <dt>Proveedor</dt>
+        <dd>{{ formatText(process.supplierName) }}</dd>
+      </div>
+      <div>
+        <dt>Valor adjudicado</dt>
+        <dd>{{ formatCop(process.awardAmount) }}</dd>
+      </div>
+      <div>
+        <dt>UNSPSC</dt>
+        <dd>{{ formatText(process.unspscCode) }}</dd>
+      </div>
+    </dl>
+
+    @if (process.processUrl) {
+      <a class="external-link" [href]="process.processUrl" target="_blank" rel="noopener noreferrer">
+        Abrir en SECOP II
+      </a>
+    }
+  </article>
+}

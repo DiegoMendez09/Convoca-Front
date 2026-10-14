@@ -1,0 +1,121 @@
+<form class="filters" [formGroup]="form" (ngSubmit)="submitSearch()">
+  <div class="filters-heading">
+    <h2>Filtros</h2>
+    <p>La búsqueda arranca en procesos publicados, fuera de borrador.</p>
+  </div>
+
+  <div class="field field-wide">
+    <label for="keyword">Palabra clave</label>
+    <input
+      id="keyword"
+      type="search"
+      name="keyword"
+      formControlName="keyword"
+      placeholder="Hospital, obra, dotación…"
+      [attr.aria-invalid]="fieldErrors()['keyword'] ? true : null"
+      [attr.aria-describedby]="describedBy('keyword')"
+    />
+    @if (fieldErrors()['keyword']; as message) {
+      <p class="field-error" id="keyword-error" role="alert">{{ message }}</p>
+    }
+  </div>
+
+  <div class="field">
+    <label for="entityName">Entidad</label>
+    <input id="entityName" type="text" name="entityName" formControlName="entityName" [attr.aria-invalid]="fieldErrors()['entityName'] ? true : null" [attr.aria-describedby]="describedBy('entityName')" />
+    @if (fieldErrors()['entityName']; as message) {
+      <p class="field-error" id="entityName-error" role="alert">{{ message }}</p>
+    }
+  </div>
+
+  <div class="field">
+    <label for="entityNit">NIT de la entidad</label>
+    <input id="entityNit" type="text" name="entityNit" formControlName="entityNit" inputmode="numeric" [attr.aria-invalid]="fieldErrors()['entityNit'] ? true : null" [attr.aria-describedby]="describedBy('entityNit')" />
+    @if (fieldErrors()['entityNit']; as message) {
+      <p class="field-error" id="entityNit-error" role="alert">{{ message }}</p>
+    }
+  </div>
+
+  <div class="field">
+    <label for="department">Departamento</label>
+    <input id="department" type="text" name="department" formControlName="department" />
+  </div>
+
+  <div class="field">
+    <label for="city">Ciudad</label>
+    <input id="city" type="text" name="city" formControlName="city" />
+  </div>
+
+  <div class="field">
+    <label for="modality">Modalidad</label>
+    <select id="modality" name="modality" formControlName="modality">
+      <option value="">Todas</option>
+      @for (modality of modalities; track modality) {
+        <option [value]="modality">{{ modality }}</option>
+      }
+    </select>
+  </div>
+
+  <div class="field">
+    <label for="contractType">Tipo de contrato</label>
+    <select id="contractType" name="contractType" formControlName="contractType">
+      <option value="">Todos</option>
+      @for (contractType of contractTypes; track contractType) {
+        <option [value]="contractType">{{ contractType }}</option>
+      }
+    </select>
+  </div>
+
+  <div class="field">
+    <label for="status">Estado</label>
+    <select id="status" name="status" formControlName="status">
+      <option value="">Todos</option>
+      @for (status of statuses; track status) {
+        <option [value]="status">{{ status }}</option>
+      }
+    </select>
+  </div>
+
+  <div class="field">
+    <label for="publishedFrom">Publicado desde</label>
+    <input id="publishedFrom" type="date" name="publishedFrom" formControlName="publishedFrom" />
+  </div>
+
+  <div class="field">
+    <label for="publishedTo">Publicado hasta</label>
+    <input
+      id="publishedTo"
+      type="date"
+      name="publishedTo"
+      formControlName="publishedTo"
+      [attr.aria-invalid]="fieldErrors()['publishedTo'] ? true : null"
+      [attr.aria-describedby]="describedBy('publishedTo')"
+    />
+    @if (fieldErrors()['publishedTo']; as message) {
+      <p class="field-error" id="publishedTo-error" role="alert">{{ message }}</p>
+    }
+  </div>
+
+  <div class="field">
+    <label for="minBasePrice">Precio base mínimo</label>
+    <input id="minBasePrice" type="text" name="minBasePrice" inputmode="decimal" formControlName="minBasePrice" [attr.aria-invalid]="fieldErrors()['minBasePrice'] ? true : null" [attr.aria-describedby]="describedBy('minBasePrice')" />
+    @if (fieldErrors()['minBasePrice']; as message) {
+      <p class="field-error" id="minBasePrice-error" role="alert">{{ message }}</p>
+    }
+  </div>
+
+  <div class="field">
+    <label for="maxBasePrice">Precio base máximo</label>
+    <input id="maxBasePrice" type="text" name="maxBasePrice" inputmode="decimal" formControlName="maxBasePrice" [attr.aria-invalid]="fieldErrors()['maxBasePrice'] ? true : null" [attr.aria-describedby]="describedBy('maxBasePrice')" />
+    @if (fieldErrors()['maxBasePrice']; as message) {
+      <p class="field-error" id="maxBasePrice-error" role="alert">{{ message }}</p>
+    }
+  </div>
+
+  <div class="field field-check">
+    <input id="publishedOnly" type="checkbox" name="publishedOnly" formControlName="publishedOnly" />
+    <label for="publishedOnly">Solo procesos publicados</label>
+  </div>
+
+  <button class="primary-action" type="submit">Buscar procesos</button>
+</form>

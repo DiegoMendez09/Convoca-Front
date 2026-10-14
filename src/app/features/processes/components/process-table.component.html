@@ -1,0 +1,41 @@
+<div class="table-wrap">
+  <table>
+    <caption class="sr-only">Procesos de contratación publicados en SECOP II</caption>
+    <thead>
+      <tr>
+        <th scope="col">Proceso</th>
+        <th scope="col">Entidad</th>
+        <th scope="col">Publicación</th>
+        <th scope="col">Precio base</th>
+        <th scope="col">Estado</th>
+        <th scope="col"><span class="sr-only">Acciones</span></th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (process of processes(); track process.processId) {
+        <tr>
+          <td>
+            <p class="process-name">{{ formatText(process.procedureName) }}</p>
+            <p class="process-meta">{{ formatText(process.reference) }} · {{ formatText(process.modality) }}</p>
+          </td>
+          <td>
+            <p>{{ formatText(process.entityName) }}</p>
+            <p class="process-meta">{{ formatText(process.city) }}{{ process.department ? ', ' + process.department : '' }}</p>
+          </td>
+          <td>{{ formatDate(process.publishedOn) }}</td>
+          <td>{{ formatCop(process.basePrice) }}</td>
+          <td>{{ formatText(process.status) }}</td>
+          <td>
+            <a [routerLink]="['/procesos', process.processId]">Ver detalle</a>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>
+
+<nav class="pager" aria-label="Paginación de procesos">
+  <button type="button" (click)="previousPage()" [disabled]="pageNumber() <= 1">Anterior</button>
+  <p>Página {{ pageNumber() }} de {{ totalPages() }}</p>
+  <button type="button" (click)="nextPage()" [disabled]="pageNumber() >= totalPages()">Siguiente</button>
+</nav>
