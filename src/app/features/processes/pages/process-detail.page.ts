@@ -9,6 +9,7 @@ import { LoadingStateComponent } from '../../../shared/components/loading-state.
 import { formatCop, formatDate, formatText, statusTone } from '../../../shared/utils/format';
 import { readErrorMessage } from '../../../shared/utils/read-error-message';
 import { ProcessesApi } from '../api/processes.api';
+import { buildOfferGuide } from '../utils/offer-guide';
 
 @Component({
   selector: 'app-process-detail-page',
@@ -28,6 +29,7 @@ export class ProcessDetailPage {
   protected readonly formatDate = formatDate;
   protected readonly formatText = formatText;
   protected readonly statusTone = statusTone;
+  protected readonly buildOfferGuide = buildOfferGuide;
 
   protected readonly processQuery = injectQuery(() => ({
     queryKey: ['processes', 'detail', this.processId()],

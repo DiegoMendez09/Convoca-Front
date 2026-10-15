@@ -218,6 +218,8 @@ td a { color: var(--amber); font-weight: 750; }
 .detail dd { margin: 0.15rem 0 0; }
 .back-link { color: var(--navy); background: transparent; padding: 0; }
 
+.offer-panel ol { margin: 0.8rem 0 0; padding-left: 1.15rem; display: grid; gap: 0.55rem; }
+.offer-panel li { line-height: 1.45; }
 .offer-form, .saved-drafts { display: grid; gap: 0.75rem; }
 .offer-blocked {
   margin: 0;

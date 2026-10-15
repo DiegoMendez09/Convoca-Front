@@ -43,7 +43,12 @@
           <td class="money">{{ formatCop(process.basePrice) }}</td>
           <td><span class="badge" [attr.data-tone]="statusTone(process.status)">{{ formatText(process.status) }}</span></td>
           <td>
-            <a [routerLink]="['/procesos', process.processId]">Abrir</a>
+            <div class="row-actions">
+              <a [routerLink]="['/procesos', process.processId]">Abrir</a>
+              @if (canApply(process)) {
+                <a [href]="process.processUrl" target="_blank" rel="noopener noreferrer">Postularme</a>
+              }
+            </div>
           </td>
         </tr>
       }
@@ -53,6 +58,6 @@
 
 <nav class="pager" aria-label="Paginación de procesos">
   <button type="button" class="ghost" (click)="previousPage()" [disabled]="pageNumber() <= 1">Anterior</button>
-  <p>Página {{ pageNumber() }} de {{ totalPages() }}</p>
-  <button type="button" class="ghost" (click)="nextPage()" [disabled]="pageNumber() >= totalPages()">Siguiente</button>
+  <p>Página {{ pageNumber() }}</p>
+  <button type="button" class="ghost" (click)="nextPage()" [disabled]="!hasMore()">Siguiente</button>
 </nav>

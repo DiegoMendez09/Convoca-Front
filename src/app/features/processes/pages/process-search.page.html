@@ -4,9 +4,9 @@
     <h2>{{ isOpenMode() ? 'Publicados y sin firmar' : 'Procesos de contratación' }}</h2>
     <p class="lead">
       @if (isOpenMode()) {
-        Procesos en estado Publicado que todavía no tienen proveedor adjudicado.
+        Procesos publicados, sin proveedor, de los últimos 30 días. Cambia la fecha si necesitas un periodo más amplio.
       } @else {
-        Consulta el dataset público de SECOP II y guarda los que quieras seguir.
+        Procesos publicados de los últimos 30 días. Cambia la fecha si necesitas un periodo más amplio.
       }
     </p>
   </div>
@@ -23,7 +23,7 @@
   <div class="results-toolbar">
     <p aria-live="polite">
       @if (processesQuery.isSuccess()) {
-        {{ totalRecords() }} procesos
+        {{ totalRecords() }}{{ processesQuery.data()?.hasMore ? '+' : '' }} procesos
       } @else {
         Resultados
       }
@@ -55,6 +55,7 @@
       [pageNumber]="processesQuery.data()?.pageNumber ?? 1"
       [totalPages]="processesQuery.data()?.totalPages ?? 1"
       [favoriteIds]="favoriteIds()"
+      [hasMore]="processesQuery.data()?.hasMore ?? false"
       (pageChange)="changePage($event)"
       (favoriteToggle)="toggleFavorite($event)"
     />

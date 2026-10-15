@@ -5,6 +5,7 @@
 } @else if (processQuery.isError()) {
   <app-error-state [message]="errorMessage()" (retry)="processQuery.refetch()" />
 } @else if (processQuery.data(); as process) {
+  <div class="detail-layout">
   <article class="detail">
     <p class="eyebrow">{{ formatText(process.processId) }}</p>
     <h2>{{ formatText(process.procedureName) }}</h2>
@@ -91,4 +92,22 @@
       </a>
     }
   </article>
+  <aside class="offer-panel" aria-labelledby="offer-title">
+    <h3 id="offer-title">Presentar la oferta</h3>
+    @if (buildOfferGuide(process); as guide) {
+      @if (!guide.canApply) {
+        <p class="offer-blocked">{{ guide.reason }}</p>
+      } @else {
+        @if (process.processUrl) {
+          <a class="external-link" [href]="process.processUrl" target="_blank" rel="noopener noreferrer">Postularme en SECOP II</a>
+        }
+        <ol>
+          @for (step of guide.steps; track step) {
+            <li>{{ step }}</li>
+          }
+        </ol>
+      }
+    }
+  </aside>
+  </div>
 }

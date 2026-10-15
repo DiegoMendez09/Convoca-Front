@@ -33,6 +33,7 @@ export interface PaginationResponse<T> {
   pageSize: number;
   totalRecords: number;
   totalPages: number;
+  hasMore: boolean;
 }
 
 export interface ProcessSearchQuery {

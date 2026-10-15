@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { injectMutation, injectQuery, injectQueryClient } from '@tanstack/angular-query-experimental';
@@ -23,6 +23,7 @@ import {
   formFromQuery,
   queryFromForm,
   queryParamsFromQuery,
+  recentPublishedFrom,
 } from '../utils/process-query';
 
 @Component({
@@ -69,8 +70,31 @@ export class ProcessSearchPage {
 
   protected readonly processesQuery = injectQuery(() => ({
     queryKey: ['processes', 'search', this.submittedFilters()],
+    enabled: this.paramMap().has('publishedFrom') || this.paramMap().has('publishedTo'),
     queryFn: () => lastValueFrom(this.api.search(this.submittedFilters())),
   }));
+
+  constructor() {
+    effect(() => {
+      const params = this.paramMap();
+      if (params.has('publishedFrom') || params.has('publishedTo')) {
+        return;
+      }
+
+      void this.router.navigate([], {
+        relativeTo: this.route,
+        replaceUrl: true,
+        queryParamsHandling: 'merge',
+        queryParams: {
+          publishedFrom: recentPublishedFrom(),
+          publishedOnly: params.get('publishedOnly') ?? 'true',
+          openForOffer: this.isOpenMode() ? 'true' : (params.get('openForOffer') ?? 'false'),
+          pageNumber: params.get('pageNumber') ?? '1',
+          pageSize: params.get('pageSize') ?? '20',
+        },
+      });
+    });
+  }
 
   protected readonly favoritesQuery = injectQuery(() => ({
     queryKey: ['favorites'],
