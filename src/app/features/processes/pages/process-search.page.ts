@@ -1,13 +1,14 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
-import { injectMutation, injectQuery } from '@tanstack/angular-query-experimental';
-import { lastValueFrom } from 'rxjs';
+import { injectMutation, injectQuery, injectQueryClient } from '@tanstack/angular-query-experimental';
+import { map, lastValueFrom } from 'rxjs';
 
 import { EmptyStateComponent } from '../../../shared/components/empty-state.component';
 import { ErrorStateComponent } from '../../../shared/components/error-state.component';
 import { LoadingStateComponent } from '../../../shared/components/loading-state.component';
 import { readErrorMessage } from '../../../shared/utils/read-error-message';
+import { FavoritesApi } from '../../favorites/api/favorites.api';
 import { ProcessesApi } from '../api/processes.api';
 import { ProcessFiltersComponent } from '../components/process-filters.component';
 import { ProcessTableComponent } from '../components/process-table.component';
@@ -16,6 +17,7 @@ import {
   ProcessSearchFormValues,
   zodFieldErrors,
 } from '../schemas/process-search.schema';
+import type { ProcessResponse } from '../types/process.types';
 import {
   filtersFromParams,
   formFromQuery,
@@ -30,23 +32,55 @@ import {
 })
 export class ProcessSearchPage {
   private readonly api = inject(ProcessesApi);
+  private readonly favoritesApi = inject(FavoritesApi);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly queryClient = injectQueryClient();
 
   private readonly paramMap = toSignal(this.route.queryParamMap, {
     initialValue: this.route.snapshot.queryParamMap,
   });
 
+  private readonly mode = toSignal(
+    this.route.data.pipe(map((data) => (data['mode'] === 'open' ? 'open' : 'all'))),
+    { initialValue: this.route.snapshot.data['mode'] === 'open' ? 'open' : 'all' },
+  );
+
   protected readonly fieldErrors = signal<Record<string, string>>({});
   protected readonly exportNotice = signal('');
+  protected readonly favoriteNotice = signal('');
+  protected readonly isOpenMode = computed(() => this.mode() === 'open');
 
-  protected readonly submittedFilters = computed(() => filtersFromParams(this.paramMap()));
+  protected readonly submittedFilters = computed(() => {
+    const filters = filtersFromParams(this.paramMap());
+    if (!this.isOpenMode()) {
+      return filters;
+    }
+
+    return {
+      ...filters,
+      status: 'Publicado',
+      publishedOnly: true,
+      openForOffer: true,
+    };
+  });
+
   protected readonly formValues = computed(() => formFromQuery(this.submittedFilters()));
 
   protected readonly processesQuery = injectQuery(() => ({
     queryKey: ['processes', 'search', this.submittedFilters()],
     queryFn: () => lastValueFrom(this.api.search(this.submittedFilters())),
   }));
+
+  protected readonly favoritesQuery = injectQuery(() => ({
+    queryKey: ['favorites'],
+    queryFn: () => lastValueFrom(this.favoritesApi.list()),
+    retry: false,
+  }));
+
+  protected readonly favoriteIds = computed(() =>
+    (this.favoritesQuery.data() ?? []).map((favorite) => favorite.processId),
+  );
 
   protected readonly exportMutation = injectMutation(() => ({
     mutationFn: () => lastValueFrom(this.api.export(this.submittedFilters())),
@@ -76,6 +110,22 @@ export class ProcessSearchPage {
     },
   }));
 
+  protected readonly favoriteMutation = injectMutation(() => ({
+    mutationFn: (process: ProcessResponse) => {
+      if (this.favoriteIds().includes(process.processId)) {
+        return lastValueFrom(this.favoritesApi.remove(process.processId));
+      }
+      return lastValueFrom(this.favoritesApi.create(process.processId));
+    },
+    onSuccess: async () => {
+      this.favoriteNotice.set('');
+      await this.queryClient.invalidateQueries({ queryKey: ['favorites'] });
+    },
+    onError: (error: unknown) => {
+      this.favoriteNotice.set(readErrorMessage(error));
+    },
+  }));
+
   protected readonly errorMessage = computed(() => readErrorMessage(this.processesQuery.error()));
   protected readonly totalRecords = computed(() => this.processesQuery.data()?.totalRecords ?? 0);
 
@@ -89,6 +139,12 @@ export class ProcessSearchPage {
     this.fieldErrors.set({});
     this.exportNotice.set('');
     const query = queryFromForm(parsed.data, 1);
+    if (this.isOpenMode()) {
+      query.openForOffer = true;
+      query.status = 'Publicado';
+      query.publishedOnly = true;
+    }
+
     void this.router.navigate([], {
       relativeTo: this.route,
       queryParams: queryParamsFromQuery(query),
@@ -106,5 +162,10 @@ export class ProcessSearchPage {
   protected exportResults(): void {
     this.exportNotice.set('');
     this.exportMutation.mutate(undefined);
+  }
+
+  protected toggleFavorite(process: ProcessResponse): void {
+    this.favoriteNotice.set('');
+    this.favoriteMutation.mutate(process);
   }
 }

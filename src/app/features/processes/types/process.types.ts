@@ -49,6 +49,7 @@ export interface ProcessSearchQuery {
   minBasePrice?: number;
   maxBasePrice?: number;
   publishedOnly: boolean;
+  openForOffer: boolean;
   pageNumber: number;
   pageSize: number;
 }

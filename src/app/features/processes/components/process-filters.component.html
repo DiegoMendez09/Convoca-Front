@@ -1,7 +1,7 @@
 <form class="filters" [formGroup]="form" (ngSubmit)="submitSearch()">
   <div class="filters-heading">
     <h2>Filtros</h2>
-    <p>La búsqueda arranca en procesos publicados, fuera de borrador.</p>
+    <p>Publicados fuera de borrador. Las oportunidades son las que siguen en estado Publicado y aún no tienen proveedor.</p>
   </div>
 
   <div class="field field-wide">
@@ -114,8 +114,15 @@
 
   <div class="field field-check">
     <input id="publishedOnly" type="checkbox" name="publishedOnly" formControlName="publishedOnly" />
-    <label for="publishedOnly">Solo procesos publicados</label>
+    <label for="publishedOnly">Excluir borradores</label>
   </div>
 
-  <button class="primary-action" type="submit">Buscar procesos</button>
+  <div class="field field-check">
+    <input id="openForOffer" type="checkbox" name="openForOffer" formControlName="openForOffer" />
+    <label for="openForOffer">Solo Publicado y sin firma</label>
+  </div>
+
+  <div class="filters-actions">
+    <button class="primary-action" type="submit">Buscar procesos</button>
+  </div>
 </form>

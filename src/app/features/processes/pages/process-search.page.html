@@ -1,41 +1,62 @@
-<section class="search-layout">
-  <app-process-filters
-    [values]="formValues()"
-    [fieldErrors]="fieldErrors()"
-    (search)="search($event)"
-  />
-
-  <div class="results">
-    <div class="results-toolbar">
-      <p aria-live="polite">
-        @if (processesQuery.isSuccess()) {
-          {{ totalRecords() }} procesos encontrados
-        } @else {
-          Resultados de procesos publicados
-        }
-      </p>
-      <button type="button" (click)="exportResults()" [disabled]="exportMutation.isPending()">
-        {{ exportMutation.isPending() ? 'Exportando…' : 'Exportar CSV' }}
-      </button>
-    </div>
-
-    @if (exportNotice()) {
-      <p class="export-notice" role="status">{{ exportNotice() }}</p>
-    }
-
-    @if (processesQuery.isPending()) {
-      <app-loading-state />
-    } @else if (processesQuery.isError()) {
-      <app-error-state [message]="errorMessage()" (retry)="processesQuery.refetch()" />
-    } @else if (totalRecords() === 0) {
-      <app-empty-state />
-    } @else {
-      <app-process-table
-        [processes]="processesQuery.data()?.items ?? []"
-        [pageNumber]="processesQuery.data()?.pageNumber ?? 1"
-        [totalPages]="processesQuery.data()?.totalPages ?? 1"
-        (pageChange)="changePage($event)"
-      />
-    }
+<section class="page-intro">
+  <div>
+    <p class="eyebrow">{{ isOpenMode() ? 'Oportunidades' : 'Exploración' }}</p>
+    <h2>{{ isOpenMode() ? 'Publicados y sin firmar' : 'Procesos de contratación' }}</h2>
+    <p class="lead">
+      @if (isOpenMode()) {
+        Procesos en estado Publicado que todavía no tienen proveedor adjudicado.
+      } @else {
+        Consulta el dataset público de SECOP II y guarda los que quieras seguir.
+      }
+    </p>
   </div>
 </section>
+
+<app-process-filters
+  [values]="formValues()"
+  [fieldErrors]="fieldErrors()"
+  [lockOpenForOffer]="isOpenMode()"
+  (search)="search($event)"
+/>
+
+<div class="results">
+  <div class="results-toolbar">
+    <p aria-live="polite">
+      @if (processesQuery.isSuccess()) {
+        {{ totalRecords() }} procesos
+      } @else {
+        Resultados
+      }
+    </p>
+    <button type="button" class="ghost" (click)="exportResults()" [disabled]="exportMutation.isPending()">
+      {{ exportMutation.isPending() ? 'Exportando…' : 'Exportar CSV' }}
+    </button>
+  </div>
+
+  @if (exportNotice()) {
+    <p class="export-notice" role="status">{{ exportNotice() }}</p>
+  }
+  @if (favoriteNotice()) {
+    <p class="field-error" role="alert">{{ favoriteNotice() }}</p>
+  }
+
+  @if (processesQuery.isPending()) {
+    <app-loading-state />
+  } @else if (processesQuery.isError()) {
+    <app-error-state [message]="errorMessage()" (retry)="processesQuery.refetch()" />
+  } @else if (totalRecords() === 0) {
+    <app-empty-state
+      [title]="isOpenMode() ? 'No hay oportunidades abiertas' : 'No hay procesos'"
+      [message]="isOpenMode() ? 'Ningún proceso publicado y sin proveedor coincide con estos filtros.' : 'Prueba con otra palabra clave, entidad o rango de fechas.'"
+    />
+  } @else {
+    <app-process-table
+      [processes]="processesQuery.data()?.items ?? []"
+      [pageNumber]="processesQuery.data()?.pageNumber ?? 1"
+      [totalPages]="processesQuery.data()?.totalPages ?? 1"
+      [favoriteIds]="favoriteIds()"
+      (pageChange)="changePage($event)"
+      (favoriteToggle)="toggleFavorite($event)"
+    />
+  }
+</div>

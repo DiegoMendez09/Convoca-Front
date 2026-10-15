@@ -42,6 +42,7 @@ export class ProcessesApi {
       minBasePrice: query.minBasePrice,
       maxBasePrice: query.maxBasePrice,
       publishedOnly: query.publishedOnly,
+      openForOffer: query.openForOffer,
       pageNumber: query.pageNumber,
       pageSize: query.pageSize,
     };

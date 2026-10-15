@@ -1,0 +1,58 @@
+<section class="page-intro">
+  <div>
+    <p class="eyebrow">Seguimiento</p>
+    <h2>Favoritos</h2>
+    <p class="lead">Procesos que guardaste en la base para volver a ellos.</p>
+  </div>
+</section>
+
+@if (notice()) {
+  <p class="export-notice" role="status">{{ notice() }}</p>
+}
+
+@if (favoritesQuery.isPending()) {
+  <app-loading-state />
+} @else if (favoritesQuery.isError()) {
+  <app-error-state [message]="errorMessage()" (retry)="favoritesQuery.refetch()" />
+} @else if (favorites().length === 0) {
+  <app-empty-state
+    title="Todavía no hay favoritos"
+    message="Marca una estrella en el listado. Si la base de Azure no está configurada, el guardado responde con un aviso."
+  />
+} @else {
+  <div class="results">
+    <div class="table-wrap">
+      <table>
+        <caption class="sr-only">Procesos marcados como favoritos</caption>
+        <thead>
+          <tr>
+            <th scope="col">Proceso</th>
+            <th scope="col">Entidad</th>
+            <th scope="col">Estado</th>
+            <th scope="col">Precio base</th>
+            <th scope="col">Guardado</th>
+            <th scope="col"><span class="sr-only">Acciones</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (favorite of favorites(); track favorite.favoriteId) {
+            <tr>
+              <td>
+                <p class="process-name">{{ formatText(favorite.procedureName) }}</p>
+                <p class="process-meta">{{ favorite.processId }}</p>
+              </td>
+              <td>{{ formatText(favorite.entityName) }}</td>
+              <td><span class="badge" [attr.data-tone]="statusTone(favorite.status)">{{ formatText(favorite.status) }}</span></td>
+              <td class="money">{{ formatCop(favorite.basePrice) }}</td>
+              <td>{{ formatDate(favorite.createdOn) }}</td>
+              <td class="row-actions">
+                <a [routerLink]="['/procesos', favorite.processId]">Abrir</a>
+                <button type="button" class="ghost" (click)="remove(favorite)">Quitar</button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+}

@@ -13,6 +13,7 @@ export class ProcessFiltersComponent {
 
   readonly values = input<ProcessSearchFormValues>(emptyProcessSearchForm);
   readonly fieldErrors = input<Record<string, string>>({});
+  readonly lockOpenForOffer = input(false);
   readonly search = output<ProcessSearchFormValues>();
 
   protected readonly form = this.formBuilder.nonNullable.group({
@@ -29,6 +30,7 @@ export class ProcessFiltersComponent {
     minBasePrice: '',
     maxBasePrice: '',
     publishedOnly: true,
+    openForOffer: false,
   });
 
   protected readonly modalities = [
@@ -54,6 +56,14 @@ export class ProcessFiltersComponent {
   constructor() {
     effect(() => {
       this.form.patchValue(this.values(), { emitEvent: false });
+      if (this.lockOpenForOffer()) {
+        this.form.controls.openForOffer.disable({ emitEvent: false });
+        this.form.controls.status.disable({ emitEvent: false });
+        return;
+      }
+
+      this.form.controls.openForOffer.enable({ emitEvent: false });
+      this.form.controls.status.enable({ emitEvent: false });
     });
   }
 

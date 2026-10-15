@@ -6,7 +6,7 @@ import { map, lastValueFrom } from 'rxjs';
 
 import { ErrorStateComponent } from '../../../shared/components/error-state.component';
 import { LoadingStateComponent } from '../../../shared/components/loading-state.component';
-import { formatCop, formatDate, formatText } from '../../../shared/utils/format';
+import { formatCop, formatDate, formatText, statusTone } from '../../../shared/utils/format';
 import { readErrorMessage } from '../../../shared/utils/read-error-message';
 import { ProcessesApi } from '../api/processes.api';
 
@@ -27,6 +27,7 @@ export class ProcessDetailPage {
   protected readonly formatCop = formatCop;
   protected readonly formatDate = formatDate;
   protected readonly formatText = formatText;
+  protected readonly statusTone = statusTone;
 
   protected readonly processQuery = injectQuery(() => ({
     queryKey: ['processes', 'detail', this.processId()],

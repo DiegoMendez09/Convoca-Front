@@ -41,7 +41,7 @@
       </div>
       <div>
         <dt>Estado</dt>
-        <dd>{{ formatText(process.status) }}</dd>
+        <dd><span class="badge" [attr.data-tone]="statusTone(process.status)">{{ formatText(process.status) }}</span></dd>
       </div>
       <div>
         <dt>Publicado</dt>

@@ -23,6 +23,7 @@ export function filtersFromParams(params: ParamMap): ProcessSearchQuery {
     minBasePrice,
     maxBasePrice,
     publishedOnly: params.get('publishedOnly') !== 'false',
+    openForOffer: params.get('openForOffer') === 'true',
     pageNumber,
     pageSize,
   };
@@ -44,6 +45,7 @@ export function formFromQuery(query: ProcessSearchQuery): ProcessSearchFormValue
     minBasePrice: query.minBasePrice === undefined ? '' : String(query.minBasePrice),
     maxBasePrice: query.maxBasePrice === undefined ? '' : String(query.maxBasePrice),
     publishedOnly: query.publishedOnly,
+    openForOffer: query.openForOffer,
   };
 }
 
@@ -62,6 +64,7 @@ export function queryFromForm(values: ProcessSearchFormValues, pageNumber = 1): 
     minBasePrice: optionalNumber(values.minBasePrice),
     maxBasePrice: optionalNumber(values.maxBasePrice),
     publishedOnly: values.publishedOnly,
+    openForOffer: values.openForOffer,
     pageNumber,
     pageSize: 20,
   };
@@ -70,6 +73,7 @@ export function queryFromForm(values: ProcessSearchFormValues, pageNumber = 1): 
 export function queryParamsFromQuery(query: ProcessSearchQuery): Record<string, string> {
   const params: Record<string, string> = {
     publishedOnly: String(query.publishedOnly),
+    openForOffer: String(query.openForOffer),
     pageNumber: String(query.pageNumber),
     pageSize: String(query.pageSize),
   };

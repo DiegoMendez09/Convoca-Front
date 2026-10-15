@@ -33,3 +33,17 @@ export function formatText(value: string | null | undefined): string {
   }
   return value;
 }
+
+export function statusTone(status: string | null | undefined): string {
+  const value = (status ?? '').trim().toLowerCase();
+  if (value === 'publicado') {
+    return 'open';
+  }
+  if (value.includes('adjudic') || value === 'cerrado' || value === 'desierto') {
+    return 'done';
+  }
+  if (value === 'borrador') {
+    return 'muted';
+  }
+  return 'wait';
+}

@@ -15,6 +15,7 @@ export const processSearchSchema = z
     minBasePrice: z.string(),
     maxBasePrice: z.string(),
     publishedOnly: z.boolean(),
+    openForOffer: z.boolean(),
   })
   .superRefine((value, context) => {
     if (value.publishedFrom && value.publishedTo && value.publishedFrom > value.publishedTo) {
@@ -85,6 +86,7 @@ export const emptyProcessSearchForm: ProcessSearchFormValues = {
   minBasePrice: '',
   maxBasePrice: '',
   publishedOnly: true,
+  openForOffer: false,
 };
 
 export function zodFieldErrors(error: z.ZodError): Record<string, string> {
