@@ -112,17 +112,17 @@
     }
   </div>
 
-  <div class="field field-check">
-    <input id="publishedOnly" type="checkbox" name="publishedOnly" formControlName="publishedOnly" />
-    <label for="publishedOnly">Excluir borradores</label>
-  </div>
-
-  <div class="field field-check">
-    <input id="openForOffer" type="checkbox" name="openForOffer" formControlName="openForOffer" />
-    <label for="openForOffer">Solo Publicado y sin firma</label>
-  </div>
-
   <div class="filters-actions">
+    <div class="check-row">
+      <div class="field field-check">
+        <input id="publishedOnly" type="checkbox" name="publishedOnly" formControlName="publishedOnly" />
+        <label for="publishedOnly">Excluir borradores</label>
+      </div>
+      <div class="field field-check">
+        <input id="openForOffer" type="checkbox" name="openForOffer" formControlName="openForOffer" />
+        <label for="openForOffer">Solo Publicado y sin firma</label>
+      </div>
+    </div>
     <button class="primary-action" type="submit">Buscar procesos</button>
   </div>
 </form>

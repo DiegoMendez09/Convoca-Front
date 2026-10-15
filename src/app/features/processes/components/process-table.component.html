@@ -1,6 +1,6 @@
 <div class="table-wrap">
-  <table>
-    <caption class="sr-only">Procesos de contratación publicados en SECOP II</caption>
+  <table class="data-table">
+    <caption>Procesos de contratación publicados en SECOP II</caption>
     <thead>
       <tr>
         <th scope="col"><span class="sr-only">Favorito</span></th>
@@ -17,7 +17,7 @@
     <tbody>
       @for (process of processes(); track process.processId) {
         <tr>
-          <td>
+          <td data-label="Favorito">
             <button
               type="button"
               class="star"
@@ -29,24 +29,24 @@
               {{ isFavorite(process.processId) ? '★' : '☆' }}
             </button>
           </td>
-          <td>
+          <td data-label="Proceso">
             <p class="process-name">{{ formatText(process.procedureName) }}</p>
             <p class="process-meta">{{ formatText(process.reference) }} · {{ process.processId }}</p>
           </td>
-          <td>
+          <td data-label="Entidad">
             <p>{{ formatText(process.entityName) }}</p>
             <p class="process-meta">{{ formatText(process.city) }}{{ process.department ? ', ' + process.department : '' }}</p>
           </td>
-          <td>{{ formatText(process.modality) }}</td>
-          <td>{{ formatDate(process.publishedOn) }}</td>
-          <td>{{ formatDate(process.offersDueOn) }}</td>
-          <td class="money">{{ formatCop(process.basePrice) }}</td>
-          <td><span class="badge" [attr.data-tone]="statusTone(process.status)">{{ formatText(process.status) }}</span></td>
-          <td>
+          <td data-label="Modalidad">{{ formatText(process.modality) }}</td>
+          <td data-label="Publicación">{{ formatDate(process.publishedOn) }}</td>
+          <td data-label="Cierre de ofertas">{{ formatDate(process.offersDueOn) }}</td>
+          <td class="money" data-label="Precio base">{{ formatCop(process.basePrice) }}</td>
+          <td data-label="Estado"><span class="badge" [attr.data-tone]="statusTone(process.status)">{{ formatText(process.status) }}</span></td>
+          <td data-label="Acciones">
             <div class="row-actions">
               <a [routerLink]="['/procesos', process.processId]">Abrir</a>
               @if (canApply(process)) {
-                <a [href]="process.processUrl" target="_blank" rel="noopener noreferrer">Postularme</a>
+                <a class="action-apply" [href]="process.processUrl" target="_blank" rel="noopener noreferrer">Postularme</a>
               }
             </div>
           </td>

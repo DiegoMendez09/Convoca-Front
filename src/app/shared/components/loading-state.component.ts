@@ -5,7 +5,7 @@ import { Component } from '@angular/core';
   template: `
     <div class="state-panel" role="status" data-testid="loading-state">
       <span class="spinner" aria-hidden="true"></span>
-      <p>Consultando procesos publicados en SECOP II…</p>
+      <p>Cargando…</p>
     </div>
   `,
 })

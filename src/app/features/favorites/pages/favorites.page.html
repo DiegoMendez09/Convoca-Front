@@ -22,8 +22,8 @@
 } @else {
   <div class="results">
     <div class="table-wrap">
-      <table>
-        <caption class="sr-only">Procesos marcados como favoritos</caption>
+      <table class="data-table">
+        <caption>Procesos marcados como favoritos</caption>
         <thead>
           <tr>
             <th scope="col">Proceso</th>
@@ -37,17 +37,19 @@
         <tbody>
           @for (favorite of favorites(); track favorite.favoriteId) {
             <tr>
-              <td>
+              <td data-label="Proceso">
                 <p class="process-name">{{ formatText(favorite.procedureName) }}</p>
                 <p class="process-meta">{{ favorite.processId }}</p>
               </td>
-              <td>{{ formatText(favorite.entityName) }}</td>
-              <td><span class="badge" [attr.data-tone]="statusTone(favorite.status)">{{ formatText(favorite.status) }}</span></td>
-              <td class="money">{{ formatCop(favorite.basePrice) }}</td>
-              <td>{{ formatDate(favorite.createdOn) }}</td>
-              <td class="row-actions">
-                <a [routerLink]="['/procesos', favorite.processId]">Abrir</a>
-                <button type="button" class="ghost" (click)="remove(favorite)">Quitar</button>
+              <td data-label="Entidad">{{ formatText(favorite.entityName) }}</td>
+              <td data-label="Estado"><span class="badge" [attr.data-tone]="statusTone(favorite.status)">{{ formatText(favorite.status) }}</span></td>
+              <td class="money" data-label="Precio base">{{ formatCop(favorite.basePrice) }}</td>
+              <td data-label="Guardado">{{ formatDate(favorite.createdOn) }}</td>
+              <td data-label="Acciones">
+                <div class="row-actions">
+                  <a [routerLink]="['/procesos', favorite.processId]">Abrir</a>
+                  <button type="button" class="ghost" (click)="remove(favorite)">Quitar</button>
+                </div>
               </td>
             </tr>
           }
