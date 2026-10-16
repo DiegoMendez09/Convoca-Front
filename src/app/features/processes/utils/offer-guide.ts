@@ -61,7 +61,7 @@ export function buildOfferGuide(process: ProcessResponse, profileText: string | 
   if (isCompanyProcess(modality, contractType)) {
     return closed(
       'Proceso de empresa',
-      'Pide firma, capacidad financiera o un equipo. Como persona natural, ingeniero de sistemas y sin empresa, no te sirve.',
+      'Pide firma, capacidad financiera o un equipo. Quien oferta como persona natural, sin empresa, no encaja en este proceso.',
       profileFit(process, profileText, false),
     );
   }
@@ -199,7 +199,7 @@ function contractStep(contractType: string, title: string): string {
 function profileFit(process: ProcessResponse, profileText: string | null | undefined, canOffer: boolean): string {
   const corpus = fold(profileText);
   if (!corpus) {
-    return 'Guarda tu título, experiencia y palabras clave en Mi perfil para ver si este objeto coincide contigo.';
+    return 'Si quieres ver si el objeto coincide con alguien, sube una plantilla con título, experiencia o palabras clave. Sin plantilla, la búsqueda sigue siendo la general.';
   }
 
   const processText = fold(`${process.procedureName ?? ''} ${process.description ?? ''} ${process.contractType ?? ''}`);

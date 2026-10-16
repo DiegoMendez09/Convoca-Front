@@ -21,8 +21,8 @@
 
 @if (processesQuery.data()?.profileKeyword; as profileKeyword) {
   <p class="profile-banner" role="status">
-    Esta consulta usa solo tu perfil: <strong>{{ profileKeyword }}</strong>.
-    <a routerLink="/perfil">Cambiar perfil</a>
+    Esta consulta usa la plantilla: <strong>{{ profileKeyword }}</strong>.
+    <a routerLink="/perfil">Cambiar plantilla</a>
   </p>
 }
 
@@ -54,7 +54,7 @@
   } @else if (totalRecords() === 0) {
     <app-empty-state
       [title]="isOpenMode() ? 'No hay oportunidades abiertas' : 'No hay procesos'"
-      [message]="isOpenMode() ? 'Ningún contrato de prestación de servicios, a tu alcance como persona natural, coincide con tu perfil en estas fechas.' : 'Prueba con otra palabra clave, entidad o rango de fechas.'"
+      [message]="isOpenMode() ? 'Ningún contrato de prestación de servicios, con plazo vigente, coincide con la plantilla en estas fechas. Si la plantilla está apagada, prueba otras fechas.' : 'Prueba con otra palabra clave, entidad o rango de fechas.'"
     />
   } @else {
     <app-process-table

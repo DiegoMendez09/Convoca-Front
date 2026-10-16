@@ -7,6 +7,12 @@ import { ErrorStateComponent } from '../../../shared/components/error-state.comp
 import { LoadingStateComponent } from '../../../shared/components/loading-state.component';
 import { readErrorMessage } from '../../../shared/utils/read-error-message';
 import { ProfileApi } from '../api/profile.api';
+import {
+  blankProfileTemplate,
+  downloadProfileTemplate,
+  parseProfileTemplate,
+  toProfileTemplate,
+} from '../profile-template';
 import { emptyProfileForm, profileFieldErrors, profileSchema } from '../schemas/profile.schema';
 
 @Component({
@@ -43,8 +49,8 @@ export class ProfilePage {
       this.noticeIsError.set(false);
       this.notice.set(
         profile.useForSearch && profile.searchText
-          ? `Perfil guardado. Las búsquedas usan: ${profile.searchText}.`
-          : 'Perfil guardado. La búsqueda sigue con los filtros normales.',
+          ? `Plantilla guardada. Las búsquedas usan: ${profile.searchText}.`
+          : 'Plantilla guardada. La búsqueda sigue siendo la general.',
       );
       await this.queryClient.invalidateQueries({ queryKey: ['profile'] });
       await this.queryClient.invalidateQueries({ queryKey: ['processes'] });
@@ -69,6 +75,37 @@ export class ProfilePage {
         useForSearch: profile.useForSearch,
       });
     });
+  }
+
+  protected downloadBlank(): void {
+    downloadProfileTemplate(blankProfileTemplate, 'plantilla-perfil.json');
+  }
+
+  protected downloadFilled(): void {
+    const values = { ...emptyProfileForm, ...this.form.getRawValue() };
+    downloadProfileTemplate(toProfileTemplate(values), 'perfil-convoca.json');
+  }
+
+  protected async upload(event: Event): Promise<void> {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    input.value = '';
+    if (!file) {
+      return;
+    }
+
+    try {
+      const values = parseProfileTemplate(await file.text());
+      this.form.patchValue(values);
+      this.form.markAsDirty();
+      this.fieldErrors.set({});
+      this.noticeIsError.set(false);
+      this.notice.set('');
+      this.saveMutation.mutate(undefined);
+    } catch (error: unknown) {
+      this.noticeIsError.set(true);
+      this.notice.set(error instanceof Error ? error.message : 'No se pudo leer la plantilla.');
+    }
   }
 
   protected save(): void {

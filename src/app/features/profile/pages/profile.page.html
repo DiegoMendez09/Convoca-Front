@@ -1,8 +1,11 @@
 <section class="page-intro">
   <div>
     <p class="eyebrow">Perfil</p>
-    <h2>Mi experiencia</h2>
-    <p class="lead">Esto no cambia los filtros ni la tabla. Solo entra en la búsqueda si marcas el check y hay datos.</p>
+    <h2>Plantilla de búsqueda</h2>
+    <p class="lead">
+      Plantilla opcional para cualquier persona. La llenas aquí, la descargas y la puedes volver a subir.
+      Si no la usas, o el check está apagado, la búsqueda sigue siendo la general.
+    </p>
   </div>
 </section>
 
@@ -14,9 +17,9 @@
   <form class="profile-card" [formGroup]="form" (ngSubmit)="save()">
     <div class="field field-check profile-toggle">
       <input id="useForSearch" type="checkbox" name="useForSearch" formControlName="useForSearch" />
-      <label for="useForSearch">Usar este perfil en las búsquedas</label>
+      <label for="useForSearch">Usar esta plantilla en las búsquedas</label>
     </div>
-    <p class="hint">Si está activo y el perfil tiene texto, la consulta ignora la palabra clave de los filtros y busca solo con tu título, experiencia o palabras clave. Si está vacío, se usa la búsqueda normal.</p>
+    <p class="hint">Si está activo y la plantilla tiene palabras, la consulta busca con esas palabras. Si está vacío o apagado, se usa la búsqueda normal.</p>
 
     <div class="field">
       <label for="title">Título</label>
@@ -25,7 +28,7 @@
         type="text"
         name="title"
         formControlName="title"
-        placeholder="Ingeniero de sistemas"
+        placeholder="Oficio o profesión"
         [attr.aria-invalid]="fieldErrors()['title'] ? true : null"
         [attr.aria-describedby]="describedBy('title')"
       />
@@ -41,7 +44,7 @@
         name="experience"
         rows="6"
         formControlName="experience"
-        placeholder="Interventoría de obra hospitalaria, diez años en infraestructura."
+        placeholder="Qué has hecho y en qué temas."
         [attr.aria-invalid]="fieldErrors()['experience'] ? true : null"
         [attr.aria-describedby]="describedBy('experience')"
       ></textarea>
@@ -57,12 +60,12 @@
         type="text"
         name="keywords"
         formControlName="keywords"
-        placeholder="interventoría, hospital, obra"
+        placeholder="tema uno, tema dos, tema tres"
         aria-describedby="keywords-hint"
         [attr.aria-invalid]="fieldErrors()['keywords'] ? true : null"
         [attr.aria-describedby]="fieldErrors()['keywords'] ? 'keywords-error' : 'keywords-hint'"
       />
-      <p class="hint" id="keywords-hint">Sepáralas con coma. Si las escribes, la búsqueda usa estas y no el texto largo.</p>
+      <p class="hint" id="keywords-hint">Sepáralas con coma. Si las escribes, la búsqueda usa estas palabras de quien llenó la plantilla.</p>
       @if (fieldErrors()['keywords']; as message) {
         <p class="field-error" id="keywords-error" role="alert">{{ message }}</p>
       }
@@ -74,8 +77,14 @@
 
     <div class="filters-actions">
       <button class="primary-action" type="submit" [disabled]="saveMutation.isPending()">
-        {{ saveMutation.isPending() ? 'Guardando…' : 'Guardar perfil' }}
+        {{ saveMutation.isPending() ? 'Guardando…' : 'Guardar plantilla' }}
       </button>
+      <button class="ghost" type="button" (click)="downloadFilled()">Descargar esta plantilla</button>
+      <button class="ghost" type="button" (click)="downloadBlank()">Descargar plantilla vacía</button>
+      <label class="ghost file-action">
+        Subir plantilla
+        <input type="file" accept="application/json,.json" (change)="upload($event)" />
+      </label>
     </div>
   </form>
 }
