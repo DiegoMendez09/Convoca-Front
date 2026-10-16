@@ -8,8 +8,9 @@ import { ErrorStateComponent } from '../../../shared/components/error-state.comp
 import { LoadingStateComponent } from '../../../shared/components/loading-state.component';
 import { formatCop, formatDate, formatText, statusTone } from '../../../shared/utils/format';
 import { readErrorMessage } from '../../../shared/utils/read-error-message';
+import { ProfileApi } from '../../profile/api/profile.api';
 import { ProcessesApi } from '../api/processes.api';
-import { buildOfferGuide } from '../utils/offer-guide';
+import { buildOfferGuide, profileCorpus } from '../utils/offer-guide';
 
 @Component({
   selector: 'app-process-detail-page',
@@ -18,6 +19,7 @@ import { buildOfferGuide } from '../utils/offer-guide';
 })
 export class ProcessDetailPage {
   private readonly api = inject(ProcessesApi);
+  private readonly profileApi = inject(ProfileApi);
   private readonly route = inject(ActivatedRoute);
 
   private readonly processId = toSignal(
@@ -30,6 +32,20 @@ export class ProcessDetailPage {
   protected readonly formatText = formatText;
   protected readonly statusTone = statusTone;
   protected readonly buildOfferGuide = buildOfferGuide;
+
+  protected readonly profileQuery = injectQuery(() => ({
+    queryKey: ['profile'],
+    retry: false,
+    queryFn: () => lastValueFrom(this.profileApi.get()),
+  }));
+
+  protected readonly profileText = computed(() => {
+    const profile = this.profileQuery.data();
+    if (!profile) {
+      return '';
+    }
+    return profileCorpus(profile.title, profile.experience, profile.keywords);
+  });
 
   protected readonly processQuery = injectQuery(() => ({
     queryKey: ['processes', 'detail', this.processId()],

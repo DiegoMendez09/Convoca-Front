@@ -34,6 +34,7 @@ export interface PaginationResponse<T> {
   totalRecords: number;
   totalPages: number;
   hasMore: boolean;
+  profileKeyword?: string | null;
 }
 
 export interface ProcessSearchQuery {

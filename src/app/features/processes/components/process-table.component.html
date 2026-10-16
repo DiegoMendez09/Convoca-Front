@@ -11,6 +11,7 @@
         <th scope="col">Cierre de ofertas</th>
         <th scope="col">Precio base</th>
         <th scope="col">Estado</th>
+        <th scope="col">Suscripción</th>
         <th scope="col"><span class="sr-only">Acciones</span></th>
       </tr>
     </thead>
@@ -42,10 +43,14 @@
           <td data-label="Cierre de ofertas">{{ formatDate(process.offersDueOn) }}</td>
           <td class="money" data-label="Precio base">{{ formatCop(process.basePrice) }}</td>
           <td data-label="Estado"><span class="badge" [attr.data-tone]="statusTone(process.status)">{{ formatText(process.status) }}</span></td>
+          <td data-label="Suscripción">
+            <span class="badge" [attr.data-tone]="guide(process).canApply ? 'open' : 'wait'">{{ guide(process).verdict }}</span>
+            <p class="process-meta">{{ guide(process).reason }}</p>
+          </td>
           <td data-label="Acciones">
             <div class="row-actions">
               <a [routerLink]="['/procesos', process.processId]">Abrir</a>
-              @if (canApply(process)) {
+              @if (guide(process).canApply && process.processUrl) {
                 <a class="action-apply" [href]="process.processUrl" target="_blank" rel="noopener noreferrer">Postularme</a>
               }
             </div>

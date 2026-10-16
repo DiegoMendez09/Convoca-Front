@@ -1,10 +1,10 @@
 <section class="page-intro">
   <div>
     <p class="eyebrow">{{ isOpenMode() ? 'Oportunidades' : 'Exploración' }}</p>
-    <h2>{{ isOpenMode() ? 'Publicados y sin firmar' : 'Procesos de contratación' }}</h2>
+    <h2>{{ isOpenMode() ? 'Procesos a los que puedes postularte' : 'Procesos de contratación' }}</h2>
     <p class="lead">
       @if (isOpenMode()) {
-        Procesos publicados, sin proveedor, de los últimos 30 días. Cambia la fecha si necesitas un periodo más amplio.
+        Mínima cuantía de prestación de servicios, con plazo vigente, para presentarte como persona natural. Quedan fuera licitaciones, obra, consultoría, compras de bienes y los contratos que ya traen el nombre de una persona.
       } @else {
         Procesos publicados de los últimos 30 días. Cambia la fecha si necesitas un periodo más amplio.
       }
@@ -18,6 +18,13 @@
   [lockOpenForOffer]="isOpenMode()"
   (search)="search($event)"
 />
+
+@if (processesQuery.data()?.profileKeyword; as profileKeyword) {
+  <p class="profile-banner" role="status">
+    Esta consulta usa solo tu perfil: <strong>{{ profileKeyword }}</strong>.
+    <a routerLink="/perfil">Cambiar perfil</a>
+  </p>
+}
 
 <div class="results">
   <div class="results-toolbar">
@@ -47,7 +54,7 @@
   } @else if (totalRecords() === 0) {
     <app-empty-state
       [title]="isOpenMode() ? 'No hay oportunidades abiertas' : 'No hay procesos'"
-      [message]="isOpenMode() ? 'Ningún proceso publicado y sin proveedor coincide con estos filtros.' : 'Prueba con otra palabra clave, entidad o rango de fechas.'"
+      [message]="isOpenMode() ? 'Ningún contrato de prestación de servicios, a tu alcance como persona natural, coincide con tu perfil en estas fechas.' : 'Prueba con otra palabra clave, entidad o rango de fechas.'"
     />
   } @else {
     <app-process-table
@@ -56,6 +63,7 @@
       [totalPages]="processesQuery.data()?.totalPages ?? 1"
       [favoriteIds]="favoriteIds()"
       [hasMore]="processesQuery.data()?.hasMore ?? false"
+      [profileText]="profileText()"
       (pageChange)="changePage($event)"
       (favoriteToggle)="toggleFavorite($event)"
     />

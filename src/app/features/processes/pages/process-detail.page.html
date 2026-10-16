@@ -93,14 +93,15 @@
     }
   </article>
   <aside class="offer-panel" aria-labelledby="offer-title">
-    <h3 id="offer-title">Presentar la oferta</h3>
-    @if (buildOfferGuide(process); as guide) {
-      @if (!guide.canApply) {
-        <p class="offer-blocked">{{ guide.reason }}</p>
-      } @else {
-        @if (process.processUrl) {
-          <a class="external-link" [href]="process.processUrl" target="_blank" rel="noopener noreferrer">Postularme en SECOP II</a>
-        }
+    <h3 id="offer-title">¿Puedes suscribirte?</h3>
+    @if (buildOfferGuide(process, profileText()); as guide) {
+      <p class="badge" [attr.data-tone]="guide.canApply ? 'open' : 'wait'">{{ guide.verdict }}</p>
+      <p [class.offer-blocked]="!guide.canApply" [class.offer-open]="guide.canApply">{{ guide.reason }}</p>
+      <p class="hint">{{ guide.profileNote }}</p>
+      @if (guide.canApply && process.processUrl) {
+        <a class="external-link" [href]="process.processUrl" target="_blank" rel="noopener noreferrer">Postularme en SECOP II</a>
+      }
+      @if (guide.steps.length > 0) {
         <ol>
           @for (step of guide.steps; track step) {
             <li>{{ step }}</li>

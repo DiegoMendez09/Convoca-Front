@@ -1,0 +1,81 @@
+<section class="page-intro">
+  <div>
+    <p class="eyebrow">Perfil</p>
+    <h2>Mi experiencia</h2>
+    <p class="lead">Esto no cambia los filtros ni la tabla. Solo entra en la búsqueda si marcas el check y hay datos.</p>
+  </div>
+</section>
+
+@if (profileQuery.isPending()) {
+  <app-loading-state />
+} @else if (profileQuery.isError()) {
+  <app-error-state [message]="errorMessage()" (retry)="profileQuery.refetch()" />
+} @else {
+  <form class="profile-card" [formGroup]="form" (ngSubmit)="save()">
+    <div class="field field-check profile-toggle">
+      <input id="useForSearch" type="checkbox" name="useForSearch" formControlName="useForSearch" />
+      <label for="useForSearch">Usar este perfil en las búsquedas</label>
+    </div>
+    <p class="hint">Si está activo y el perfil tiene texto, la consulta ignora la palabra clave de los filtros y busca solo con tu título, experiencia o palabras clave. Si está vacío, se usa la búsqueda normal.</p>
+
+    <div class="field">
+      <label for="title">Título</label>
+      <input
+        id="title"
+        type="text"
+        name="title"
+        formControlName="title"
+        placeholder="Ingeniero de sistemas"
+        [attr.aria-invalid]="fieldErrors()['title'] ? true : null"
+        [attr.aria-describedby]="describedBy('title')"
+      />
+      @if (fieldErrors()['title']; as message) {
+        <p class="field-error" id="title-error" role="alert">{{ message }}</p>
+      }
+    </div>
+
+    <div class="field">
+      <label for="experience">Experiencia laboral</label>
+      <textarea
+        id="experience"
+        name="experience"
+        rows="6"
+        formControlName="experience"
+        placeholder="Interventoría de obra hospitalaria, diez años en infraestructura."
+        [attr.aria-invalid]="fieldErrors()['experience'] ? true : null"
+        [attr.aria-describedby]="describedBy('experience')"
+      ></textarea>
+      @if (fieldErrors()['experience']; as message) {
+        <p class="field-error" id="experience-error" role="alert">{{ message }}</p>
+      }
+    </div>
+
+    <div class="field">
+      <label for="keywords">Palabras clave</label>
+      <input
+        id="keywords"
+        type="text"
+        name="keywords"
+        formControlName="keywords"
+        placeholder="interventoría, hospital, obra"
+        aria-describedby="keywords-hint"
+        [attr.aria-invalid]="fieldErrors()['keywords'] ? true : null"
+        [attr.aria-describedby]="fieldErrors()['keywords'] ? 'keywords-error' : 'keywords-hint'"
+      />
+      <p class="hint" id="keywords-hint">Sepáralas con coma. Si las escribes, la búsqueda usa estas y no el texto largo.</p>
+      @if (fieldErrors()['keywords']; as message) {
+        <p class="field-error" id="keywords-error" role="alert">{{ message }}</p>
+      }
+    </div>
+
+    @if (notice()) {
+      <p [class.field-error]="noticeIsError()" [class.export-notice]="!noticeIsError()" [attr.role]="noticeIsError() ? 'alert' : 'status'">{{ notice() }}</p>
+    }
+
+    <div class="filters-actions">
+      <button class="primary-action" type="submit" [disabled]="saveMutation.isPending()">
+        {{ saveMutation.isPending() ? 'Guardando…' : 'Guardar perfil' }}
+      </button>
+    </div>
+  </form>
+}

@@ -16,6 +16,7 @@ export class ProcessTableComponent {
   readonly totalPages = input.required<number>();
   readonly favoriteIds = input<string[]>([]);
   readonly hasMore = input(false);
+  readonly profileText = input('');
   readonly pageChange = output<number>();
   readonly favoriteToggle = output<ProcessResponse>();
 
@@ -28,8 +29,8 @@ export class ProcessTableComponent {
     return this.favoriteIds().includes(processId);
   }
 
-  protected canApply(process: ProcessResponse): boolean {
-    return buildOfferGuide(process).canApply && !!process.processUrl;
+  protected guide(process: ProcessResponse) {
+    return buildOfferGuide(process, this.profileText());
   }
 
   protected previousPage(): void {

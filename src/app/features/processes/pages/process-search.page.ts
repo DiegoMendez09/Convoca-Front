@@ -1,6 +1,6 @@
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { injectMutation, injectQuery, injectQueryClient } from '@tanstack/angular-query-experimental';
 import { map, lastValueFrom } from 'rxjs';
 
@@ -9,6 +9,7 @@ import { ErrorStateComponent } from '../../../shared/components/error-state.comp
 import { LoadingStateComponent } from '../../../shared/components/loading-state.component';
 import { readErrorMessage } from '../../../shared/utils/read-error-message';
 import { FavoritesApi } from '../../favorites/api/favorites.api';
+import { ProfileApi } from '../../profile/api/profile.api';
 import { ProcessesApi } from '../api/processes.api';
 import { ProcessFiltersComponent } from '../components/process-filters.component';
 import { ProcessTableComponent } from '../components/process-table.component';
@@ -18,6 +19,7 @@ import {
   zodFieldErrors,
 } from '../schemas/process-search.schema';
 import type { ProcessResponse } from '../types/process.types';
+import { profileCorpus } from '../utils/offer-guide';
 import {
   filtersFromParams,
   formFromQuery,
@@ -28,12 +30,13 @@ import {
 
 @Component({
   selector: 'app-process-search-page',
-  imports: [ProcessFiltersComponent, ProcessTableComponent, LoadingStateComponent, ErrorStateComponent, EmptyStateComponent],
+  imports: [ProcessFiltersComponent, ProcessTableComponent, LoadingStateComponent, ErrorStateComponent, EmptyStateComponent, RouterLink],
   templateUrl: './process-search.page.html',
 })
 export class ProcessSearchPage {
   private readonly api = inject(ProcessesApi);
   private readonly favoritesApi = inject(FavoritesApi);
+  private readonly profileApi = inject(ProfileApi);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly queryClient = injectQueryClient();
@@ -67,6 +70,20 @@ export class ProcessSearchPage {
   });
 
   protected readonly formValues = computed(() => formFromQuery(this.submittedFilters()));
+
+  protected readonly profileQuery = injectQuery(() => ({
+    queryKey: ['profile'],
+    retry: false,
+    queryFn: () => lastValueFrom(this.profileApi.get()),
+  }));
+
+  protected readonly profileText = computed(() => {
+    const profile = this.profileQuery.data();
+    if (!profile) {
+      return '';
+    }
+    return profileCorpus(profile.title, profile.experience, profile.keywords);
+  });
 
   protected readonly processesQuery = injectQuery(() => ({
     queryKey: ['processes', 'search', this.submittedFilters()],
