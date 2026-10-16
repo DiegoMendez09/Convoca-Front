@@ -25,12 +25,17 @@ export class ProcessTableComponent {
   protected readonly formatText = formatText;
   protected readonly statusTone = statusTone;
 
+  readonly canSubscribe = (process: ProcessResponse): boolean =>
+    buildOfferGuide(process, this.profileText()).canApply;
+
+  readonly subscribeLabel = (process: ProcessResponse): string =>
+    buildOfferGuide(process, this.profileText()).verdict;
+
+  readonly subscribeReason = (process: ProcessResponse): string =>
+    buildOfferGuide(process, this.profileText()).reason;
+
   protected isFavorite(processId: string): boolean {
     return this.favoriteIds().includes(processId);
-  }
-
-  protected guide(process: ProcessResponse) {
-    return buildOfferGuide(process, this.profileText());
   }
 
   protected previousPage(): void {

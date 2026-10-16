@@ -29,6 +29,19 @@ export interface MeritExamSummary {
   createdOn: string;
 }
 
+export interface FunctionManual {
+  manualId: string;
+  fileName: string;
+  opecCode: string;
+  jobTitle: string;
+  level: string;
+  grade: string;
+  purpose: string;
+  functions: string;
+  knowledge: string;
+  uploadedOn: string;
+}
+
 export interface GenerateExamValues {
   callNumber: string;
   entityName: string;
@@ -40,4 +53,5 @@ export interface GenerateExamValues {
   functions: string;
   knowledge: string;
   axes: string;
+  manualId: string | null;
 }

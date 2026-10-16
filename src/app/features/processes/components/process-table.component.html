@@ -44,13 +44,13 @@
           <td class="money" data-label="Precio base">{{ formatCop(process.basePrice) }}</td>
           <td data-label="Estado"><span class="badge" [attr.data-tone]="statusTone(process.status)">{{ formatText(process.status) }}</span></td>
           <td data-label="Suscripción">
-            <span class="badge" [attr.data-tone]="guide(process).canApply ? 'open' : 'wait'">{{ guide(process).verdict }}</span>
-            <p class="process-meta">{{ guide(process).reason }}</p>
+            <span class="badge" [attr.data-tone]="canSubscribe(process) ? 'open' : 'wait'">{{ subscribeLabel(process) }}</span>
+            <p class="process-meta">{{ subscribeReason(process) }}</p>
           </td>
           <td data-label="Acciones">
             <div class="row-actions">
               <a [routerLink]="['/procesos', process.processId]">Abrir</a>
-              @if (guide(process).canApply && process.processUrl) {
+              @if (canSubscribe(process) && process.processUrl) {
                 <a class="action-apply" [href]="process.processUrl" target="_blank" rel="noopener noreferrer">Postularme</a>
               }
             </div>

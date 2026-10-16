@@ -94,7 +94,7 @@
   </article>
   <aside class="offer-panel" aria-labelledby="offer-title">
     <h3 id="offer-title">¿Puedes suscribirte?</h3>
-    @if (buildOfferGuide(process, profileText()); as guide) {
+    @if (offerGuide(process); as guide) {
       <p class="badge" [attr.data-tone]="guide.canApply ? 'open' : 'wait'">{{ guide.verdict }}</p>
       <p [class.offer-blocked]="!guide.canApply" [class.offer-open]="guide.canApply">{{ guide.reason }}</p>
       <p class="hint">{{ guide.profileNote }}</p>

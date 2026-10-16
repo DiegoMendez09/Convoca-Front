@@ -3,18 +3,77 @@
     <p class="eyebrow">CNSC</p>
     <h2>Exámenes de mérito</h2>
     <p class="lead">
-      Arma un simulacro con la convocatoria y con la OPEC. Las preguntas comportamentales siguen las competencias del Decreto 815 de 2018.
-      Las funcionales, de conocimiento y de ejes salen del manual y de los ejes que pegues. No son las preguntas oficiales de la CNSC.
+      Sube el PDF del manual y escribe la OPEC. Se guarda solo ese empleo: propósito, funciones y conocimientos.
+      Si esa OPEC no está en el PDF, no se guarda nada. Las preguntas comportamentales siguen el Decreto 815 de 2018.
+      No son las preguntas oficiales de la CNSC.
     </p>
   </div>
 </section>
 
+<form class="filters exam-form" [formGroup]="uploadForm" (ngSubmit)="upload(manualFile)">
+  <div class="filters-heading">
+    <h2>Manual de funciones</h2>
+    <p>Un PDF puede traer varias OPEC. Aquí se extrae únicamente la que indiques.</p>
+  </div>
+  <div class="field field-wide">
+    <label for="manualFile">PDF del manual</label>
+    <input #manualFile id="manualFile" type="file" name="manualFile" accept="application/pdf,.pdf" (change)="onFile($event)" />
+    <p class="process-meta">{{ fileLabel() }}</p>
+  </div>
+  <div class="field">
+    <label for="uploadOpec">Código OPEC</label>
+    <input id="uploadOpec" type="text" name="opecCode" formControlName="opecCode" placeholder="220546" />
+  </div>
+  <div class="filters-actions">
+    <button type="submit" class="primary-action" [disabled]="uploadMutation.isPending()">
+      {{ uploadMutation.isPending() ? 'Leyendo PDF…' : 'Guardar OPEC' }}
+    </button>
+  </div>
+</form>
+
+@if (notice()) {
+  <p class="export-notice" [class.field-error]="noticeIsError()" role="status">{{ notice() }}</p>
+}
+
+@if (manualsQuery.data(); as manuals) {
+  @if (manuals.length > 0) {
+    <section class="results" aria-labelledby="saved-manuals">
+      <h2 id="saved-manuals" class="exam-saved-title">OPEC guardadas</h2>
+      <ul class="saved-exams">
+        @for (manual of manuals; track manual.manualId) {
+          <li>
+            <button type="button" class="ghost" (click)="useManual(manual.manualId)">
+              OPEC {{ manual.opecCode }} · {{ manual.jobTitle || manual.fileName }}
+            </button>
+            <button type="button" class="ghost" (click)="deleteManualMutation.mutate(manual.manualId)">Eliminar</button>
+          </li>
+        }
+      </ul>
+    </section>
+  }
+}
+
 <form class="filters exam-form" [formGroup]="form" (ngSubmit)="generate()">
   <div class="filters-heading">
     <h2>Convocatoria y OPEC</h2>
-    <p>Una pregunta por línea en funciones, conocimientos y ejes.</p>
+    <p>El examen usa la OPEC guardada. Los ejes de la convocatoria se escriben aquí, uno por línea.</p>
   </div>
 
+  <div class="field field-wide">
+    <label for="savedManual">OPEC del manual</label>
+    <select id="savedManual" name="manualId" formControlName="manualId" (change)="useManual(form.controls.manualId.value)">
+      <option value="">Elige una OPEC guardada</option>
+      @for (manual of manualsQuery.data() ?? []; track manual.manualId) {
+        <option [value]="manual.manualId">OPEC {{ manual.opecCode }} · {{ manual.jobTitle || manual.fileName }}</option>
+      }
+    </select>
+  </div>
+  @if (selectedManual(); as manual) {
+    <div class="field field-wide">
+      <p class="process-meta">{{ manual.level || 'Nivel no detectado' }} · grado {{ manual.grade || '—' }} · {{ manual.fileName }}</p>
+      <p>{{ manual.purpose }}</p>
+    </div>
+  }
   <div class="field">
     <label for="callNumber">Número de convocatoria</label>
     <input id="callNumber" type="text" name="callNumber" formControlName="callNumber" placeholder="4 de 2025" />
@@ -24,37 +83,13 @@
     <input id="entityName" type="text" name="entityName" formControlName="entityName" />
   </div>
   <div class="field">
-    <label for="level">Nivel del empleo</label>
+    <label for="level">Nivel, si el manual no lo trae</label>
     <select id="level" name="level" formControlName="level">
       <option value="Asistencial">Asistencial</option>
       <option value="Técnico">Técnico</option>
       <option value="Profesional">Profesional</option>
       <option value="Asesor">Asesor</option>
     </select>
-  </div>
-  <div class="field">
-    <label for="opecCode">Código OPEC</label>
-    <input id="opecCode" type="text" name="opecCode" formControlName="opecCode" required />
-  </div>
-  <div class="field field-wide">
-    <label for="jobTitle">Denominación del empleo</label>
-    <input id="jobTitle" type="text" name="jobTitle" formControlName="jobTitle" placeholder="Profesional universitario" required />
-  </div>
-  <div class="field">
-    <label for="grade">Grado</label>
-    <input id="grade" type="text" name="grade" formControlName="grade" />
-  </div>
-  <div class="field field-wide">
-    <label for="purpose">Propósito principal del manual</label>
-    <textarea id="purpose" name="purpose" rows="3" formControlName="purpose"></textarea>
-  </div>
-  <div class="field field-wide">
-    <label for="functions">Funciones esenciales</label>
-    <textarea id="functions" name="functions" rows="6" formControlName="functions" placeholder="Una función por línea"></textarea>
-  </div>
-  <div class="field field-wide">
-    <label for="knowledge">Conocimientos básicos</label>
-    <textarea id="knowledge" name="knowledge" rows="4" formControlName="knowledge" placeholder="Un conocimiento por línea"></textarea>
   </div>
   <div class="field field-wide">
     <label for="axes">Ejes temáticos de la convocatoria</label>
@@ -66,10 +101,6 @@
     </button>
   </div>
 </form>
-
-@if (notice()) {
-  <p class="export-notice" [class.field-error]="noticeIsError()" role="status">{{ notice() }}</p>
-}
 
 @if (examsQuery.data(); as saved) {
   @if (saved.length > 0) {
@@ -128,6 +159,10 @@
     </ol>
     <button type="button" class="primary-action" (click)="grade()" [disabled]="graded()">Calificar</button>
   </article>
+}
+
+@if (manualsQuery.isError()) {
+  <app-error-state [message]="'No se pudieron cargar los manuales guardados.'" (retry)="manualsQuery.refetch()" />
 }
 
 @if (examsQuery.isError()) {

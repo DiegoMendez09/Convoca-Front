@@ -1,12 +1,12 @@
 import type { ProcessResponse } from '../types/process.types';
 
-export interface OfferGuide {
+export type OfferGuide = {
   canApply: boolean;
   verdict: string;
   reason: string;
   profileNote: string;
   steps: string[];
-}
+};
 
 const OBJECT_WORDS = new Set([
   'contratar', 'contrato', 'prestacion', 'servicio', 'servicios', 'software', 'obra',
@@ -23,7 +23,7 @@ const STOP_WORDS = new Set([
   'años', 'anos', 'experiencia', 'laboral', 'titulo', 'profesional', 'trabajo',
 ]);
 
-export function buildOfferGuide(process: ProcessResponse, profileText?: string | null): OfferGuide {
+export function buildOfferGuide(process: ProcessResponse, profileText: string | null | undefined): OfferGuide {
   const modality = fold(process.modality);
   const contractType = fold(process.contractType);
   const status = fold(process.status);

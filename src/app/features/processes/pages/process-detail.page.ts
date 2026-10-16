@@ -10,7 +10,8 @@ import { formatCop, formatDate, formatText, statusTone } from '../../../shared/u
 import { readErrorMessage } from '../../../shared/utils/read-error-message';
 import { ProfileApi } from '../../profile/api/profile.api';
 import { ProcessesApi } from '../api/processes.api';
-import { buildOfferGuide, profileCorpus } from '../utils/offer-guide';
+import type { ProcessResponse } from '../types/process.types';
+import { buildOfferGuide, profileCorpus, type OfferGuide } from '../utils/offer-guide';
 
 @Component({
   selector: 'app-process-detail-page',
@@ -31,7 +32,7 @@ export class ProcessDetailPage {
   protected readonly formatDate = formatDate;
   protected readonly formatText = formatText;
   protected readonly statusTone = statusTone;
-  protected readonly buildOfferGuide = buildOfferGuide;
+  readonly offerGuide = (process: ProcessResponse): OfferGuide => buildOfferGuide(process, this.profileText());
 
   protected readonly profileQuery = injectQuery(() => ({
     queryKey: ['profile'],
