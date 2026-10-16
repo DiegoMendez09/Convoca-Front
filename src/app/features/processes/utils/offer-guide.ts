@@ -36,7 +36,7 @@ export function buildOfferGuide(process: ProcessResponse, profileText?: string |
     return closed(
       'No deja suscribirte',
       personName
-        ? `El título es el nombre de una persona (${process.procedureName}). Es la publicidad de un contrato de régimen especial, no una convocatoria. SECOP no abre suscripción ni creación de oferta.`
+        ? `El título es el nombre de una persona (${process.procedureName}). Es la publicidad de un contrato de régimen especial, no una convocatoria. El portal de contratación no abre suscripción ni creación de oferta.`
         : 'Es contratación de régimen especial sin fase de ofertas. La entidad publica el contrato; no hay postulación abierta.',
       profileFit(process, profileText, false),
     );
@@ -101,12 +101,12 @@ export function buildOfferGuide(process: ProcessResponse, profileText?: string |
   if (deadlinePassed(process.offersDueOn)) {
     return closed(
       'Plazo vencido',
-      `La recepción de ofertas cerró el ${process.offersDueOn.slice(0, 10)}. SECOP ya no deja presentar la oferta.`,
+      `La recepción de ofertas cerró el ${process.offersDueOn.slice(0, 10)}. El portal ya no deja presentar la oferta.`,
       profileFit(process, profileText, false),
     );
   }
 
-  const due = `La recepción de ofertas va hasta el ${process.offersDueOn.slice(0, 10)}. Después de esa fecha SECOP no recibe la oferta. Confirma la hora exacta en el cronograma del proceso.`;
+  const due = `La recepción de ofertas va hasta el ${process.offersDueOn.slice(0, 10)}. Después de esa fecha el portal no recibe la oferta. Confirma la hora exacta en el cronograma del proceso.`;
   const price = process.basePrice
     ? `El presupuesto oficial es ${formatCop(process.basePrice)}. No lo superes. Si cotizas muy por debajo, explica el valor: una oferta artificialmente baja se puede rechazar.`
     : 'No superes el presupuesto oficial y desglosa el precio como lo pida la lista del cuestionario.';
@@ -124,7 +124,7 @@ export function buildOfferGuide(process: ProcessResponse, profileText?: string |
       modalityStep(modality),
       contractStep(contractType, title),
       price,
-      'Carga cada anexo en su pregunta, envía la oferta y conserva el acuse. Si SECOP no confirma el envío, la oferta no quedó presentada.',
+      'Carga cada anexo en su pregunta, envía la oferta y conserva el acuse. Si el portal no confirma el envío, la oferta no quedó presentada.',
     ].filter((step) => step !== ''),
   };
 }

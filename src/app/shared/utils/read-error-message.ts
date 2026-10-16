@@ -7,5 +7,5 @@ export function readErrorMessage(error: unknown): string {
       return body.message;
     }
   }
-  return 'No fue posible consultar SECOP II. Revisa la conexión e inténtalo de nuevo.';
+  return 'convocaApp no pudo completar la solicitud. Revisa la conexión e inténtalo de nuevo.';
 }

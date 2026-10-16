@@ -332,6 +332,35 @@ button:disabled { background: #d5dee8; color: #3e4c5c; cursor: not-allowed; }
 }
 .saved-drafts { list-style: none; padding: 0; margin: 0.6rem 0 0; }
 
+.exam-form textarea { min-height: 6rem; }
+.exam-saved-title { margin: 0.9rem 0.8rem 0; font-size: 1.05rem; }
+.saved-exams { list-style: none; margin: 0; padding: 0.4rem 0.8rem 0.9rem; display: grid; gap: 0.55rem; }
+.saved-exams li { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.exam-sheet {
+  margin-top: 1rem;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  padding: 1.1rem;
+}
+.exam-questions { display: grid; gap: 1rem; margin: 1rem 0; padding-left: 1.2rem; }
+.exam-stem { margin: 0.25rem 0 0.55rem; font-weight: 700; }
+.exam-options { display: grid; gap: 0.45rem; }
+.exam-option {
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-start;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid #c5d2df;
+  border-radius: 0.75rem;
+  background: #fff;
+  cursor: pointer;
+}
+.exam-option input { margin-top: 0.2rem; }
+.exam-option.is-selected { border-color: var(--navy); background: #e7f0f8; }
+.exam-option.is-correct { border-color: #146c43; background: #e5f6ec; }
+.exam-option.is-wrong { border-color: #8a1f1f; background: #fff1f0; }
+
 .sr-only {
   position: absolute;
   width: 1px;

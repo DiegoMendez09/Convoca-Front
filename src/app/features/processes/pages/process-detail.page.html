@@ -88,7 +88,7 @@
 
     @if (process.processUrl) {
       <a class="external-link" [href]="process.processUrl" target="_blank" rel="noopener noreferrer">
-        Abrir en SECOP II
+        Abrir proceso
       </a>
     }
   </article>
@@ -99,7 +99,7 @@
       <p [class.offer-blocked]="!guide.canApply" [class.offer-open]="guide.canApply">{{ guide.reason }}</p>
       <p class="hint">{{ guide.profileNote }}</p>
       @if (guide.canApply && process.processUrl) {
-        <a class="external-link" [href]="process.processUrl" target="_blank" rel="noopener noreferrer">Postularme en SECOP II</a>
+        <a class="external-link" [href]="process.processUrl" target="_blank" rel="noopener noreferrer">Postularme</a>
       }
       @if (guide.steps.length > 0) {
         <ol>

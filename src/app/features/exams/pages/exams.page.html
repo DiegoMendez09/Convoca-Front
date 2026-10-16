@@ -1,0 +1,135 @@
+<section class="page-intro">
+  <div>
+    <p class="eyebrow">CNSC</p>
+    <h2>Exámenes de mérito</h2>
+    <p class="lead">
+      Arma un simulacro con la convocatoria y con la OPEC. Las preguntas comportamentales siguen las competencias del Decreto 815 de 2018.
+      Las funcionales, de conocimiento y de ejes salen del manual y de los ejes que pegues. No son las preguntas oficiales de la CNSC.
+    </p>
+  </div>
+</section>
+
+<form class="filters exam-form" [formGroup]="form" (ngSubmit)="generate()">
+  <div class="filters-heading">
+    <h2>Convocatoria y OPEC</h2>
+    <p>Una pregunta por línea en funciones, conocimientos y ejes.</p>
+  </div>
+
+  <div class="field">
+    <label for="callNumber">Número de convocatoria</label>
+    <input id="callNumber" type="text" name="callNumber" formControlName="callNumber" placeholder="4 de 2025" />
+  </div>
+  <div class="field">
+    <label for="entityName">Entidad</label>
+    <input id="entityName" type="text" name="entityName" formControlName="entityName" />
+  </div>
+  <div class="field">
+    <label for="level">Nivel del empleo</label>
+    <select id="level" name="level" formControlName="level">
+      <option value="Asistencial">Asistencial</option>
+      <option value="Técnico">Técnico</option>
+      <option value="Profesional">Profesional</option>
+      <option value="Asesor">Asesor</option>
+    </select>
+  </div>
+  <div class="field">
+    <label for="opecCode">Código OPEC</label>
+    <input id="opecCode" type="text" name="opecCode" formControlName="opecCode" required />
+  </div>
+  <div class="field field-wide">
+    <label for="jobTitle">Denominación del empleo</label>
+    <input id="jobTitle" type="text" name="jobTitle" formControlName="jobTitle" placeholder="Profesional universitario" required />
+  </div>
+  <div class="field">
+    <label for="grade">Grado</label>
+    <input id="grade" type="text" name="grade" formControlName="grade" />
+  </div>
+  <div class="field field-wide">
+    <label for="purpose">Propósito principal del manual</label>
+    <textarea id="purpose" name="purpose" rows="3" formControlName="purpose"></textarea>
+  </div>
+  <div class="field field-wide">
+    <label for="functions">Funciones esenciales</label>
+    <textarea id="functions" name="functions" rows="6" formControlName="functions" placeholder="Una función por línea"></textarea>
+  </div>
+  <div class="field field-wide">
+    <label for="knowledge">Conocimientos básicos</label>
+    <textarea id="knowledge" name="knowledge" rows="4" formControlName="knowledge" placeholder="Un conocimiento por línea"></textarea>
+  </div>
+  <div class="field field-wide">
+    <label for="axes">Ejes temáticos de la convocatoria</label>
+    <textarea id="axes" name="axes" rows="4" formControlName="axes" placeholder="Un eje por línea"></textarea>
+  </div>
+  <div class="filters-actions">
+    <button type="submit" class="primary-action" [disabled]="generateMutation.isPending()">
+      {{ generateMutation.isPending() ? 'Generando…' : 'Generar examen' }}
+    </button>
+  </div>
+</form>
+
+@if (notice()) {
+  <p class="export-notice" [class.field-error]="noticeIsError()" role="status">{{ notice() }}</p>
+}
+
+@if (examsQuery.data(); as saved) {
+  @if (saved.length > 0) {
+    <section class="results" aria-labelledby="saved-exams">
+      <h2 id="saved-exams" class="exam-saved-title">Exámenes guardados</h2>
+      <ul class="saved-exams">
+        @for (item of saved; track item.examId) {
+          <li>
+            <button type="button" class="ghost" (click)="openMutation.mutate(item.examId)">
+              {{ item.title }} · {{ item.questionCount }} preguntas
+            </button>
+            <button type="button" class="ghost" (click)="deleteMutation.mutate(item.examId)">Quitar</button>
+          </li>
+        }
+      </ul>
+    </section>
+  }
+}
+
+@if (generateMutation.isPending() || openMutation.isPending()) {
+  <app-loading-state />
+}
+
+@if (exam(); as current) {
+  <article class="exam-sheet">
+    <p class="eyebrow">{{ current.level }} · OPEC {{ current.opecCode }}</p>
+    <h2>{{ current.title }}</h2>
+    @if (graded()) {
+      <p class="offer-open" role="status">Respuestas correctas: {{ score().correct }} de {{ score().total }}.</p>
+    }
+    <ol class="exam-questions">
+      @for (question of current.questions; track question.number) {
+        <li>
+          <p class="process-meta">{{ question.section }} · {{ question.topic }}</p>
+          <p class="exam-stem">{{ question.number }}. {{ question.stem }}</p>
+          <div class="exam-options" role="radiogroup" [attr.aria-label]="'Pregunta ' + question.number">
+            @for (option of question.options; track $index) {
+              <label
+                class="exam-option"
+                [class.is-selected]="answers()[question.number] === $index && !graded()"
+                [class.is-correct]="graded() && $index === question.correctIndex"
+                [class.is-wrong]="graded() && answers()[question.number] === $index && $index !== question.correctIndex"
+              >
+                <input
+                  type="radio"
+                  [name]="'q' + question.number"
+                  [checked]="answers()[question.number] === $index"
+                  (change)="choose(question.number, $index)"
+                />
+                <span>{{ option }}</span>
+              </label>
+            }
+          </div>
+        </li>
+      }
+    </ol>
+    <button type="button" class="primary-action" (click)="grade()" [disabled]="graded()">Calificar</button>
+  </article>
+}
+
+@if (examsQuery.isError()) {
+  <app-error-state [message]="'No se pudieron cargar los exámenes guardados.'" (retry)="examsQuery.refetch()" />
+}

@@ -7,7 +7,7 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "frontend": {
+    "convoca-app": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:class": {
@@ -85,10 +85,10 @@
           },
           "configurations": {
             "production": {
-              "buildTarget": "frontend:build:production"
+              "buildTarget": "convoca-app:build:production"
             },
             "development": {
-              "buildTarget": "frontend:build:development"
+              "buildTarget": "convoca-app:build:development"
             }
           },
           "defaultConfiguration": "development"
